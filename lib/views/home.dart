@@ -4,6 +4,7 @@ import 'package:news_app/helper/data.dart';
 import 'package:news_app/helper/news.dart';
 import 'package:news_app/models/article_model.dart';
 import 'package:news_app/models/category_model.dart';
+import 'package:news_app/views/article_view.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -73,7 +74,7 @@ class _HomeState extends State<Home> {
                     Container(
                       padding: EdgeInsets.only(top: 16),
                       child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: ClampingScrollPhysics(),
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
                           itemCount: articles.length,
@@ -82,6 +83,7 @@ class _HomeState extends State<Home> {
                               imageUrl: articles[index].urlToImage,
                               title: articles[index].title,
                               desc: articles[index].description,
+                              url: articles[index].url,
                             );
                           }),
                     )
@@ -140,17 +142,49 @@ class BlogTile extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String desc;
+  final String url;
   BlogTile(
-      {@required this.imageUrl, @required this.title, @required this.desc});
+      {@required this.imageUrl,
+      @required this.title,
+      @required this.desc,
+      @required this.url});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Image.network(imageUrl),
-          Text(title),
-          Text(desc),
-        ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ArticleView(
+              blogUrl: url,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 16),
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(imageUrl),
+            ),
+            Text(
+              title,
+              style: TextStyle(
+                  fontSize: 19,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w500),
+            ),
+            SizedBox(
+              height: 6,
+            ),
+            Text(
+              desc,
+              style: TextStyle(color: Colors.black54),
+            ),
+          ],
+        ),
       ),
     );
   }
